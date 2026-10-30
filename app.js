@@ -243,9 +243,19 @@ let isCursorNearStarGlobal = false;
   addGemini3DStar(0.78, 0x059669, 0x34d399, -2.2, -18.6, -0.9, { x: 0.3, y: 0.25, z: -0.15 }); // Skills Tech Grid Left (Emerald Star)
   addGemini3DStar(0.72, 0xfbbf24, 0xf59e0b,  2.0, -19.8, -1.0, { x: -0.25, y: 0.3, z: 0.15 }); // Skills Bottom Right (Amber Star)
 
-  // 5. Contact Section (Y = -20.5 to -24.5)
-  addGemini3DStar(0.80, 0xec4899, 0xf472b6, -2.2, -21.5, -1.1, { x: 0.25, y: 0.3, z: 0.2 });  // Contact Left
-  addGemini3DStar(0.82, 0x4f46e5, 0x6366f1,  2.5, -23.5, -1.0, { x: -0.35, y: 0.25, z: -0.15 });// Contact Right
+  // 5. STARTUP & CLIENT WORK SECTION (Y = -20.5 to -28.0) -> HIGHLY VISIBLE!
+  addGemini3DStar(0.90, 0xa3e635, 0xbef264, -2.3, -21.0, -0.7, { x: 0.35, y: 0.4, z: 0.2 });   // Startup Intro Left (Lime Gemini Star)
+  addGemini3DStar(0.82, 0x4f46e5, 0x7c3aed,  2.4, -22.2, -0.9, { x: -0.3, y: 0.35, z: -0.18 }); // Startup Intro Right (Indigo Star)
+  addGemini3DStar(0.75, 0x059669, 0x34d399, -1.8, -23.5, -1.0, { x: 0.28, y: -0.3, z: 0.15 });  // Featured Project Left (Emerald Star)
+  addGemini3DStar(0.88, 0xa3e635, 0x84cc16,  0.3, -24.8, -0.8, { x: 0.32, y: 0.28, z: -0.2 });  // Gallery Center (Large Lime Star)
+  addGemini3DStar(0.70, 0x0284c7, 0x38bdf8,  2.5, -25.5, -1.1, { x: -0.25, y: 0.35, z: 0.18 }); // Gallery Right (Cyan Star)
+  addGemini3DStar(0.78, 0x9333ea, 0xec4899, -2.0, -26.5, -0.9, { x: 0.3, y: 0.25, z: -0.15 });  // Services Left (Violet Star)
+  addGemini3DStar(0.85, 0xa3e635, 0xbef264,  1.8, -27.5, -0.8, { x: -0.28, y: 0.4, z: 0.2 });   // Process Right (Lime Star)
+  addGemini3DStar(0.72, 0xfbbf24, 0xf59e0b, -0.5, -28.5, -1.0, { x: 0.25, y: -0.3, z: 0.12 });  // CTA Center (Amber Star)
+
+  // 6. Contact Section (Y = -29.0 to -33.0)
+  addGemini3DStar(0.80, 0xec4899, 0xf472b6, -2.2, -30.0, -1.1, { x: 0.25, y: 0.3, z: 0.2 });   // Contact Left
+  addGemini3DStar(0.82, 0x4f46e5, 0x6366f1,  2.5, -32.0, -1.0, { x: -0.35, y: 0.25, z: -0.15 });// Contact Right
 
   /* ── 2c. Mouse & Scroll Tracking ── */
   const mouse = { x: 0, y: 0 };
@@ -320,7 +330,7 @@ let isCursorNearStarGlobal = false;
 
     const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
     const scrollProgress = Math.min(1, Math.max(0, currentScrollY / (maxScrollY || 1)));
-    camera.position.y = -scrollProgress * 24.0;
+    camera.position.y = -scrollProgress * 34.0;
     camera.position.x = smoothMouse.x * 0.15;
 
     let anyStarClose = false;
@@ -973,14 +983,273 @@ function initRandomLetterSwapNav() {
   });
 }
 
+/* ═══════════════════════════════════════════════════
+   10. STARTUP & CLIENT WORK SECTION ENGINE
+   Data-driven gallery, services, and featured project
+═══════════════════════════════════════════════════ */
+
+/* ✏️ EDITABLE: Add your real client websites here.
+   Each object represents a website you've built for a client.
+   Set featured: true on the project you want showcased as the featured card.
+   To add a new website, just add another object to this array. */
+const clientWebsites = [
+  {
+    name: "Paper & Pie",
+    title: "Paper & Pie — Restaurant & Cafe Website",
+    category: "Restaurant & Cafe Website",
+    description: "A visually appetizing, modern restaurant and cafe website designed for Paper & Pie, featuring an elegant menu showcase, engaging culinary photography layout, and a smooth browsing experience for hungry visitors.",
+    previewType: "cafe",
+    image: "",
+    url: "https://wibzzite-ui.github.io/paper-and-pie-/",
+    github: "https://github.com/wibzzite-ui/paper-and-pie-",
+    technologies: ["HTML5", "CSS3", "JavaScript", "Responsive UI"],
+    featured: false
+  },
+  {
+    name: "Sample Saloon",
+    title: "Saloon — Beauty & Wellness Website",
+    category: "Business Website",
+    description: "A sleek and professional website designed for a beauty salon business, complete with service listings, booking information, and a modern aesthetic that reflects the brand's premium identity.",
+    previewType: "saloon",
+    image: "",
+    url: "https://wibzzite-ui.github.io/sample-website-saloon/",
+    github: "https://github.com/wibzzite-ui/sample-website-saloon",
+    technologies: ["HTML5", "CSS3", "JavaScript"],
+    featured: false
+  },
+];
+
+/* ✏️ EDITABLE: Modify services you offer */
+const startupServices = [
+  {
+    icon: "🌐",
+    title: "Business Website Development",
+    description: "Professional websites to establish your brand's online presence."
+  },
+  {
+    icon: "👤",
+    title: "Portfolio Website Development",
+    description: "Showcase your work with stunning personal portfolio websites."
+  },
+  {
+    icon: "🍽️",
+    title: "Restaurant & Cafe Websites",
+    description: "Appetizing digital experiences for food & hospitality businesses."
+  },
+  {
+    icon: "🚀",
+    title: "Landing Page Design",
+    description: "High-converting landing pages that drive results."
+  },
+  {
+    icon: "📱",
+    title: "Responsive Website Development",
+    description: "Pixel-perfect websites that work beautifully on all devices."
+  },
+  {
+    icon: "✨",
+    title: "Website Redesign & UI Improvements",
+    description: "Modernize your existing website with fresh design and better UX."
+  }
+];
+
+function initStartupSection() {
+  const galleryGrid = document.getElementById('su-gallery-grid');
+  const featuredWrap = document.getElementById('su-featured-wrap');
+  const emptyState = document.getElementById('su-empty-state');
+  const servicesGrid = document.getElementById('su-services-grid');
+
+  if (!galleryGrid) return;
+
+  // ── Render Services ──
+  if (servicesGrid) {
+    servicesGrid.innerHTML = startupServices.map(service => `
+      <div class="su-service-card" data-cursor="hover">
+        <span class="su-service-icon">${service.icon}</span>
+        <h4>${service.title}</h4>
+        <p>${service.description}</p>
+      </div>
+    `).join('');
+  }
+
+  // ── Separate featured vs regular projects ──
+  const featuredProject = clientWebsites.find(w => w.featured);
+  const regularProjects = clientWebsites.filter(w => !w.featured);
+
+  // ── Render Featured Project ──
+  if (featuredProject && featuredWrap) {
+    featuredWrap.style.display = 'block';
+    const techTags = (featuredProject.technologies || []).map(t => `<span class="su-tech-tag">${t}</span>`).join('');
+    const liveBtn = featuredProject.url
+      ? `<a href="${featuredProject.url}" target="_blank" rel="noopener noreferrer" class="su-btn-live" data-cursor="hover">View Live Website ↗</a>`
+      : '';
+    const githubBtn = featuredProject.github
+      ? `<a href="${featuredProject.github}" target="_blank" rel="noopener noreferrer" class="su-btn-details" data-cursor="hover">GitHub ↗</a>`
+      : '';
+    const imgContent = featuredProject.image
+      ? `<img src="${featuredProject.image}" alt="${featuredProject.title}" loading="lazy">`
+      : `<div class="su-card-preview-placeholder">Preview Coming Soon</div>`;
+
+    featuredWrap.innerHTML = `
+      <div class="su-featured-card js-reveal-fade">
+        <div class="su-featured-img">${imgContent}</div>
+        <div class="su-featured-info">
+          <span class="su-card-category">${featuredProject.category || 'Client Project'}</span>
+          <h3>${featuredProject.title}</h3>
+          <p class="su-card-desc">${featuredProject.description || ''}</p>
+          <div class="su-featured-techs">${techTags}</div>
+          <div class="su-featured-links">
+            ${liveBtn}
+            ${githubBtn}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  else if (featuredWrap) {
+    featuredWrap.style.display = 'none';
+    featuredWrap.innerHTML = '';
+  }
+
+  // ── Render Gallery Cards ──
+  const projectsToRender = clientWebsites;
+
+  if (projectsToRender.length === 0) {
+    // Show empty state
+    if (emptyState) emptyState.style.display = 'block';
+    galleryGrid.style.display = 'none';
+  } else if (projectsToRender.length > 0) {
+    if (emptyState) emptyState.style.display = 'none';
+    galleryGrid.style.display = 'grid';
+    galleryGrid.innerHTML = projectsToRender.map(website => {
+      const techTags = (website.technologies || []).map(t => `<span class="su-tech-tag">${t}</span>`).join('');
+      const liveBtn = website.url
+        ? `<a href="${website.url}" target="_blank" rel="noopener noreferrer" class="su-btn-live" data-cursor="hover">Live Website ↗</a>`
+        : '';
+      const githubBtn = website.github
+        ? `<a href="${website.github}" target="_blank" rel="noopener noreferrer" class="su-btn-details" data-cursor="hover">GitHub ↗</a>`
+        : '';
+      const imgContent = website.image
+        ? `<img src="${website.image}" alt="${website.title}" loading="lazy">`
+        : `<div class="su-card-preview-placeholder su-preview-${website.previewType || 'default'}">
+             <div class="su-preview-mockup">
+               <span class="su-preview-icon">${website.previewType === 'cafe' ? '🍽️' : '✂️'}</span>
+               <span class="su-preview-brand">${website.name}</span>
+               <span class="su-preview-badge">${website.category}</span>
+             </div>
+           </div>`;
+
+      return `
+        <article class="su-website-card js-reveal-card" data-cursor="view">
+          <div class="su-card-preview">
+            ${imgContent}
+          </div>
+          <div class="su-card-body">
+            <p class="su-card-category">${website.category || 'Website'}</p>
+            <p class="su-card-client">${website.name || ''}</p>
+            <h4 class="su-card-title">${website.title}</h4>
+            <p class="su-card-desc">${website.description || ''}</p>
+            <div class="su-card-techs">${techTags}</div>
+            <div class="su-card-links">${liveBtn}${githubBtn}</div>
+          </div>
+        </article>
+      `;
+    }).join('');
+  } else {
+    // Only featured exists, hide the gallery grid
+    galleryGrid.style.display = 'none';
+  }
+
+  // ── GSAP Animations for Startup Section ──
+  // Service cards stagger
+  if (servicesGrid) {
+    const serviceCards = servicesGrid.querySelectorAll('.su-service-card');
+    gsap.fromTo(serviceCards,
+      { opacity: 0, y: 40, scale: 0.92 },
+      {
+        opacity: 1, y: 0, scale: 1,
+        duration: 0.7, stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: servicesGrid, start: 'top 88%', toggleActions: 'play none none none' }
+      }
+    );
+  }
+
+  // Process steps stagger
+  const processSteps = document.querySelectorAll('.su-process-step');
+  processSteps.forEach((step, i) => {
+    gsap.fromTo(step,
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.7, delay: i * 0.15,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: step, start: 'top 88%', toggleActions: 'play none none none' }
+      }
+    );
+  });
+
+  // Website cards stagger
+  const websiteCards = galleryGrid.querySelectorAll('.su-website-card');
+  websiteCards.forEach((card, index) => {
+    gsap.fromTo(card,
+      { opacity: 0, y: 60, scale: 0.95 },
+      {
+        opacity: 1, y: 0, scale: 1,
+        duration: 0.85,
+        delay: (index % 3) * 0.12,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: card, start: 'top 88%', toggleActions: 'play none none none' }
+      }
+    );
+  });
+
+  // Subtle 3D card tilt on mousemove
+  if (!isTouchDevice) {
+    document.querySelectorAll('.su-website-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        gsap.to(card, {
+          rotateY: x * 8,
+          rotateX: -y * 6,
+          duration: 0.4,
+          ease: 'power2.out',
+          transformPerspective: 800
+        });
+      });
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.6, ease: 'power2.out' });
+      });
+    });
+  }
+
+  // Re-bind magnetic buttons for the new CTA buttons
+  document.querySelectorAll('.su-cta-btn').forEach((btn) => {
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width / 2) * 0.15;
+      const y = (e.clientY - rect.top - rect.height / 2) * 0.15;
+      gsap.to(btn, { x, y, duration: 0.2, ease: 'power2.out' });
+    });
+    btn.addEventListener('mouseleave', () => {
+      gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'power2.out' });
+    });
+  });
+}
+
 // Auto-run on DOM ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initSmokeType();
     initRandomLetterSwapNav();
+    initStartupSection();
   });
 } else {
   initSmokeType();
   initRandomLetterSwapNav();
+  initStartupSection();
 }
 
