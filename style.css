@@ -91,17 +91,18 @@ body {
   position: relative;
 }
 
-/* Custom cursor only active on desktop */
-@media (min-width: 769px) {
-  body {
-    cursor: none;
-  }
-  a, button, [data-cursor] {
-    cursor: none !important;
-  }
-  input, textarea, select {
-    cursor: text !important;
-  }
+/* Default cursor & interactive pointer styles */
+body {
+  cursor: default;
+}
+a, button, [role="button"], [data-cursor], .nav-link, .nav-logo, .social-link, .btn, .project-card, .su-website-card, .su-service-card, .hamburger, .mobile-link {
+  cursor: pointer;
+}
+input, textarea {
+  cursor: text;
+}
+select {
+  cursor: pointer;
 }
 
 /* ── 3D CANVAS LAYER ── */
@@ -215,6 +216,7 @@ body {
    SLEEK MODERN MINIMALIST CURSOR
 ═══════════════════════════════════════════════════ */
 #custom-cursor {
+  display: none !important;
   position: fixed;
   top: 0;
   left: 0;
@@ -1272,9 +1274,11 @@ body {
 }
 
 @media (max-width: 768px) {
-  body { cursor: auto; }
+  body { cursor: default; }
   #custom-cursor { display: none !important; }
-  a, button, input, textarea, select { cursor: pointer !important; }
+  a, button, [role="button"], [data-cursor] { cursor: pointer; }
+  input, textarea { cursor: text; }
+  select { cursor: pointer; }
 
   .nav-links { display: none; }
   .hamburger { display: flex; }

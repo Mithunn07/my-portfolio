@@ -403,118 +403,17 @@ let isCursorNearStarGlobal = false;
    3. SLEEK MODERN MINIMALIST CURSOR ENGINE
 ═══════════════════════════════════════════════════ */
 (function initLuxuryCursor() {
-  if (isTouchDevice) return;
-
+  // Custom cursor disabled - default system cursor & pointer active
   const cursorWrapper = document.getElementById('custom-cursor');
-  const cursorDot     = document.getElementById('cursor-dot');
-  const cursorRing    = document.getElementById('cursor-ring');
-  if (!cursorWrapper || !cursorDot || !cursorRing) return;
-
-  let mouseX = window.innerWidth / 2;
-  let mouseY = window.innerHeight / 2;
-  let ringX  = mouseX;
-  let ringY  = mouseY;
-  let prevX  = mouseX;
-  let prevY  = mouseY;
-
-  window.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  }, { passive: true });
-
-  let lastSparkTime = 0;
-  function createSpark(x, y) {
-    const now = performance.now();
-    if (now - lastSparkTime < 38) return;
-    lastSparkTime = now;
-
-    const spark = document.createElement('div');
-    spark.className = 'cursor-spark';
-    spark.style.left = `${x}px`;
-    spark.style.top = `${y}px`;
-    document.body.appendChild(spark);
-
-    gsap.to(spark, {
-      x: (Math.random() - 0.5) * 22,
-      y: (Math.random() - 0.5) * 22,
-      scale: 0,
-      opacity: 0,
-      duration: 0.65,
-      ease: 'power2.out',
-      onComplete: () => spark.remove(),
-    });
+  if (cursorWrapper) {
+    cursorWrapper.style.display = 'none';
   }
-
-  function updateCursor() {
-    ringX += (mouseX - ringX) * 0.16;
-    ringY += (mouseY - ringY) * 0.16;
-
-    const velocityX = mouseX - prevX;
-    const velocityY = mouseY - prevY;
-    prevX = mouseX;
-    prevY = mouseY;
-
-    const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-    if (speed > 14) {
-      createSpark(mouseX, mouseY);
-    }
-
-    cursorWrapper.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
-
-    const angle = Math.atan2(velocityY, velocityX) * (180 / Math.PI);
-    const clampedScale = Math.min(speed * 0.015, 0.45);
-    const scaleX = 1 + clampedScale;
-    const scaleY = 1 - clampedScale * 0.5;
-
-    if (!cursorWrapper.classList.contains('is-hover') && !cursorWrapper.classList.contains('is-view')) {
-      cursorRing.style.transform = `translate(-50%, -50%) rotate(${angle}deg) scale(${scaleX}, ${scaleY})`;
-    } else {
-      cursorRing.style.transform = 'translate(-50%, -50%)';
-    }
-
-    if (isCursorNearStarGlobal) {
-      cursorWrapper.classList.add('is-star-near');
-    } else {
-      cursorWrapper.classList.remove('is-star-near');
-    }
-
-    requestAnimationFrame(updateCursor);
-  }
-  updateCursor();
-
-  document.addEventListener('mouseover', (e) => {
-    const target = e.target.closest('a, button, .trait-tag, .tech-item, .stat-card, input, textarea, .nav-logo');
-    if (target) {
-      cursorWrapper.classList.add('is-hover');
-    }
-
-    const card = e.target.closest('.project-card');
-    if (card) {
-      cursorWrapper.classList.remove('is-hover');
-      cursorWrapper.classList.add('is-view');
-    }
-  });
-
-  document.addEventListener('mouseout', (e) => {
-    const target = e.target.closest('a, button, .trait-tag, .tech-item, .stat-card, input, textarea, .nav-logo');
-    if (target) {
-      cursorWrapper.classList.remove('is-hover');
-    }
-
-    const card = e.target.closest('.project-card');
-    if (card) {
-      cursorWrapper.classList.remove('is-view');
-    }
-  });
-
-  window.addEventListener('mousedown', () => cursorWrapper.classList.add('is-active'));
-  window.addEventListener('mouseup', () => cursorWrapper.classList.remove('is-active'));
 
   // Gentle Magnetic Button Movement
   document.querySelectorAll('.magnetic-btn, .nav-logo, .social-link').forEach((btn) => {
     btn.addEventListener('mousemove', (e) => {
       const rect = btn.getBoundingClientRect();
-      const x = (e.clientX - rect.left - rect.width / 2) * 0.15; // Gentle magnetic pull
+      const x = (e.clientX - rect.left - rect.width / 2) * 0.15;
       const y = (e.clientY - rect.top - rect.height / 2) * 0.15;
       gsap.to(btn, { x, y, duration: 0.2, ease: 'power2.out' });
     });
