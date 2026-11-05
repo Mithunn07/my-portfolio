@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const MIME_TYPES = {
   '.html': 'text/html',
@@ -15,6 +15,28 @@ const MIME_TYPES = {
 };
 
 const server = http.createServer((req, res) => {
+  // Support serverless endpoint locally
+  if (req.url === '/api/contact') {
+    let bodyData = '';
+    req.on('data', chunk => { bodyData += chunk; });
+    req.on('end', () => {
+      try {
+        req.body = bodyData ? JSON.parse(bodyData) : {};
+      } catch (e) {
+        req.body = {};
+      }
+      res.status = (code) => { res.statusCode = code; return res; };
+      res.json = (data) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(data));
+        return res;
+      };
+      const contactHandler = require('./api/contact.js');
+      contactHandler(req, res);
+    });
+    return;
+  }
+
   let filePath = path.join(__dirname, req.url === '/' ? 'index.html' : req.url);
   const extname = String(path.extname(filePath)).toLowerCase();
   const contentType = MIME_TYPES[extname] || 'application/octet-stream';

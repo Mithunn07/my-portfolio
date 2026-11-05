@@ -736,13 +736,9 @@
           </div>
         </div>
         <div class="contact-form-wrap js-reveal-fade">
-          <!-- Direct FormSubmit Integration sends email to dudemithun07@gmail.com -->
-          <form class="contact-form" id="contact-form" action="https://formsubmit.co/dudemithun07@gmail.com"
-            method="POST">
-            <!-- Hidden configuration for FormSubmit -->
-            <input type="hidden" name="_subject" value="✦ New Message from Portfolio Visitor!">
-            <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_template" value="table">
+          <form class="contact-form" id="contact-form" novalidate>
+            <!-- Anti-Spam Honeypot Field -->
+            <input type="text" name="_hp" style="display:none;" tabindex="-1" autocomplete="off" aria-hidden="true">
 
             <div class="form-group">
               <label for="form-name">Your Name *</label>

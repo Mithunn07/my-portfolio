@@ -670,7 +670,7 @@ let isCursorNearStarGlobal = false;
 
 
 /* ═══════════════════════════════════════════════════
-   6. CONTACT FORM — DIRECT EMAIL DELIVERY TO DUDEMITHUN07@GMAIL.COM
+   6. CONTACT FORM — SECURE SERVER-SIDE RESEND DELIVERY
 ═══════════════════════════════════════════════════ */
 (function initContactForm() {
   const form = document.getElementById('contact-form');
@@ -679,48 +679,78 @@ let isCursorNearStarGlobal = false;
   const statusMsg = document.getElementById('form-status-msg');
   if (!form || !btn) return;
 
+  function setStatus(text, type) {
+    if (!statusMsg) return;
+    statusMsg.className = 'form-status-msg ' + type;
+    if (type === 'error') {
+      statusMsg.style.color = '#ef4444';
+    } else if (type === 'success') {
+      statusMsg.style.color = '#10b981';
+    } else {
+      statusMsg.style.color = '#94a3b8';
+    }
+    statusMsg.textContent = text;
+  }
+
+  function focusField(fieldName) {
+    const field = form.querySelector('[name="' + fieldName + '"]');
+    if (field) field.focus();
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const name = form.querySelector('[name="name"]').value.trim();
-    const email = form.querySelector('[name="email"]').value.trim();
-    const phone = form.querySelector('[name="phone"]')?.value.trim() || 'Not provided';
-    const message = form.querySelector('[name="message"]').value.trim();
+    const name = form.querySelector('[name="name"]')?.value.trim() || '';
+    const email = form.querySelector('[name="email"]')?.value.trim() || '';
+    const phone = form.querySelector('[name="phone"]')?.value.trim() || '';
+    const message = form.querySelector('[name="message"]')?.value.trim() || '';
+    const hp = form.querySelector('[name="_hp"]')?.value.trim() || '';
 
-    if (!name || !email || !message) {
-      if (statusMsg) {
-        statusMsg.className = 'form-status-msg error';
-        statusMsg.textContent = 'Please fill out all required fields (*).';
-      }
+    // Client-side Validation
+    if (!name || name.length < 2) {
+      setStatus('Please enter your full name (at least 2 characters).', 'error');
+      focusField('name');
       return;
     }
 
-    btn.disabled = true;
-    if (btnText) btnText.textContent = 'Sending Message...';
-    if (statusMsg) {
-      statusMsg.className = 'form-status-msg';
-      statusMsg.textContent = 'Delivering your message to Mithun...';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      setStatus('Please enter a valid email address.', 'error');
+      focusField('email');
+      return;
     }
 
+    if (!message || message.length < 5) {
+      setStatus('Please enter your message (at least 5 characters).', 'error');
+      focusField('message');
+      return;
+    }
+
+    // Set loading state & disable submit button
+    btn.disabled = true;
+    if (btnText) btnText.textContent = 'Sending Message...';
+    setStatus('Delivering your message to Mithun...', 'info');
+
     try {
-      const response = await fetch('https://formsubmit.co/ajax/dudemithun07@gmail.com', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
         body: JSON.stringify({
-          Name: name,
-          Email: email,
-          Phone: phone,
-          Message: message,
-          _subject: `✦ Portfolio Message from ${name}!`,
+          name,
+          email,
+          phone,
+          message,
+          _hp: hp,
         }),
       });
 
-      const result = await response.json();
+      const data = await response.json().catch(() => ({}));
 
-      if (response.ok || result.success === 'true' || result.success === true) {
+      if (response.ok && data.success) {
+        // Genuine Backend Success Confirmation
         gsap.to(btn, {
           scale: 0.95,
           duration: 0.1,
@@ -729,39 +759,27 @@ let isCursorNearStarGlobal = false;
           onComplete: () => {
             if (btnText) btnText.textContent = '✓ Message Sent!';
             gsap.to(btn, { backgroundColor: '#10b981', duration: 0.4 });
-            if (statusMsg) {
-              statusMsg.className = 'form-status-msg success';
-              statusMsg.textContent = 'Thank you! Your email has been delivered directly to Mithun.';
-            }
+            setStatus('Thank you! Your message has been delivered directly to dudemithun07@gmail.com.', 'success');
             form.reset();
 
             setTimeout(() => {
               btn.disabled = false;
               if (btnText) btnText.textContent = 'Send Message';
-              gsap.to(btn, { backgroundColor: '#7c6dfa', duration: 0.5 });
-            }, 4500);
+              gsap.to(btn, { backgroundColor: '', duration: 0.4 });
+            }, 5000);
           },
         });
       } else {
-        throw new Error(result.message || 'Submission failed');
+        // Genuine Error from Backend or Resend
+        const errorMsg = data.error || 'Failed to deliver message. Please check the information and try again.';
+        throw new Error(errorMsg);
       }
     } catch (err) {
-      console.warn('FormSubmit AJAX fallback triggered:', err);
-
-      if (btnText) btnText.textContent = 'Opening Mail App...';
-      if (statusMsg) {
-        statusMsg.className = 'form-status-msg success';
-        statusMsg.textContent = 'Direct mail opened. You can also email dudemithun07@gmail.com directly!';
-      }
-
-      const mailtoUrl = `mailto:dudemithun07@gmail.com?subject=Portfolio%20Inquiry%20from%20${encodeURIComponent(name)}&body=Name:%20${encodeURIComponent(name)}%0AEmail:%20${encodeURIComponent(email)}%0APhone:%20${encodeURIComponent(phone)}%0A%0AMessage:%0A${encodeURIComponent(message)}`;
-      window.location.href = mailtoUrl;
-
-      setTimeout(() => {
-        btn.disabled = false;
-        if (btnText) btnText.textContent = 'Send Message';
-        form.reset();
-      }, 3000);
+      console.error('Contact form submission error:', err);
+      btn.disabled = false;
+      if (btnText) btnText.textContent = 'Send Message';
+      gsap.to(btn, { backgroundColor: '', duration: 0.2 });
+      setStatus(err.message || 'Unable to deliver message right now. Please try again.', 'error');
     }
   });
 })();

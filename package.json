@@ -1,0 +1,12 @@
+{
+  "name": "mithun-portfolio",
+  "version": "1.0.0",
+  "description": "N. Mithun - Portfolio Website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "resend": "^4.0.1"
+  }
+}
