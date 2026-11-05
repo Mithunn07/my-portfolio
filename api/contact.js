@@ -38,7 +38,7 @@ module.exports = async function handler(req, res) {
 
     const { name, email, phone, message, _hp } = body;
 
-    // 3. Spam Honeypot Protection: if hidden field is filled, silently ignore
+    // 3. Spam Honeypot Protection: if hidden field is filled, silently drop
     if (_hp) {
       console.warn('Bot detected via honeypot field');
       return res.status(200).json({
@@ -88,7 +88,7 @@ module.exports = async function handler(req, res) {
       console.error('RESEND_API_KEY environment variable is not configured.');
       return res.status(500).json({
         success: false,
-        error: 'Email service configuration is missing on the server. Please ensure RESEND_API_KEY is configured in Vercel project settings.'
+        error: 'Email service configuration is missing on the server. Please add RESEND_API_KEY in Vercel project settings (Settings -> Environment Variables).'
       });
     }
 
@@ -96,11 +96,17 @@ module.exports = async function handler(req, res) {
 
     const recipient = process.env.RECIPIENT_EMAIL || 'dudemithun07@gmail.com';
     const sender = process.env.FROM_EMAIL || 'Portfolio Contact <onboarding@resend.dev>';
-    const submissionTime = new Date().toLocaleString('en-US', {
-      timeZone: 'Asia/Kolkata',
-      dateStyle: 'full',
-      timeStyle: 'long'
-    });
+    
+    let submissionTime = '';
+    try {
+      submissionTime = new Date().toLocaleString('en-US', {
+        timeZone: 'Asia/Kolkata',
+        dateStyle: 'full',
+        timeStyle: 'long'
+      });
+    } catch (e) {
+      submissionTime = new Date().toUTCString();
+    }
 
     // 6. Build the email payload
     const subject = `New Portfolio Inquiry — ${trimmedName}`;
@@ -188,7 +194,7 @@ Direct reply will be sent to: ${trimmedEmail}
       console.error('Resend delivery error:', error);
       return res.status(error.statusCode || 502).json({
         success: false,
-        error: error.message || 'Failed to dispatch email through provider.'
+        error: error.message || 'Failed to dispatch email through Resend.'
       });
     }
 
@@ -202,7 +208,7 @@ Direct reply will be sent to: ${trimmedEmail}
     console.error('Unhandled server error in contact API:', err);
     return res.status(500).json({
       success: false,
-      error: 'An internal server error occurred while processing your message.'
+      error: err && err.message ? err.message : 'An internal server error occurred while processing your message.'
     });
   }
 };
